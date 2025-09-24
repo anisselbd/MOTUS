@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Motus - Le Jeu</title>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <img src="motus-logo.png" alt="MOTUS" class="motus-logo-game">
+            </div>
+            <div class="buttons-container">
+                <button onclick="window.location.href='index.html'" class="back-btn">
+                    🏠 Retour à l'accueil
+                </button>
+                <button id="musicBtn">🎵 Activer la musique</button>
+                <button id="rulesBtn">🔊​ Règles du jeu</button>
+            </div>
+        </header>
+
+        <audio id="motusMusic" src="MOTUS [Lintégralité du générique].mp3" loop></audio>
+        <audio id="rulesAudio" src="reglesdujeu.mp3"></audio>
+
+        <!-- système de points -->
+        <div class="score-section">
+            <div class="current-score">
+                💯 Score: <span id="score-display">0</span> pts
+            </div>
+            <div class="best-score">
+                🏆 Record: <span id="best-score-display">0</span> pts
+            </div>
+        </div>
+       
+
+        <div class="game-info">
+            <div class="attempts">Tentatives restantes: <span id="attempts-count">6</span></div>
+            <div class="timer-section">
+                <div class="timer-label">⏱️ Temps restant:</div>
+                <div class="timer" id="timer">02:00</div>
+            </div>
+            <button id="new-game-btn">Nouveau mot</button>
+        </div>
+
+        <div id="alert" class="alert hidden"></div> <!-- Zone d'alerte pour les messages -->
+
+        <div class="game-board" id="game-board"> <!-- Plateau de jeu -->
+
+        </div>
+
+        <div class="input-section"> <!-- Section pour l'input utilisateur -->
+            <input type="text" id="guess-input" maxlength="6" placeholder="Tapez votre mot..." autocomplete="off">
+            <button id="submit-btn">Valider</button>
+        </div>
+
+        <div class="keyboard" id="keyboard"> <!-- Clavier virtuel -->
+
+        </div>
+
+        <div class="game-status"> <!-- Informations sur le mot en bas de l'interface-->
+            <div id="word-length">Mot de <span id="word-length-display">6</span> lettres</div>
+            <div id="first-letter">Première lettre: <span id="first-letter-display">?</span></div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+
+</html>

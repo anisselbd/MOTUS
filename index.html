@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Motus - Jeu de Mots</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container"> <!-- Conteneur principal -->
+        <header>
+            <img src="motus-logo.png" alt="MOTUS" class="motus-logo">
+            <p class="game-title">MOTUS : Le célèbre jeu de lettres !</p>
+            <button id="musicBtn">🎵 Activer la musique</button>
+            <button id="rulesBtn">🔊​ Règles du jeu</button>
+        </header>
+
+        <audio id="motusMusic" src="MOTUS [Lintégralité du générique].mp3" loop></audio>
+        <audio id="rulesAudio" src="reglesdujeu.mp3"></audio>
+
+        <div class="home-content">
+            <div class="game-description">
+                <h2>Comment jouer ?</h2>
+                <ul>
+                    <li>🎯 Devinez le mot mystère en 6 tentatives maximum</li>
+                    <li>🔤 La première lettre vous est donnée</li>
+                    <li>🟥 Rouge = lettre bien placée</li>
+                    <li>🟨 Jaune = lettre présente mais mal placée</li>
+                    <li>⬜ Gris = lettre absente du mot</li>
+                </ul>
+            </div>
+
+            <div class="start-section"> <!-- Section pour commencer une partie -->
+                <a href="game.html" class="start-btn">🚀 Commencer une partie</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // musique sur la page d'accueil
+        document.addEventListener('DOMContentLoaded', function () {
+            const music = document.getElementById("motusMusic");
+            const musicBtn = document.getElementById("musicBtn");
+            const rulesAudio = document.getElementById("rulesAudio");
+            const rulesBtn = document.getElementById("rulesBtn");
+            let playing = false;
+            let rulesPlaying = false;
+
+            // Gestion musique
+            if (musicBtn && music) {
+                musicBtn.addEventListener("click", function () {
+                    if (!playing) {
+                        music.play();
+                        playing = true;
+                        musicBtn.textContent = "🔇 Désactiver la musique";
+                        musicBtn.classList.add("off");
+                    } else {
+                        music.pause();
+                        playing = false;
+                        musicBtn.textContent = "🎵 Activer la musique";
+                        musicBtn.classList.remove("off");
+                    }
+                });
+            }
+
+            // Gestion règles audio
+            if (rulesBtn && rulesAudio) {
+                rulesBtn.addEventListener("click", function () {
+                    if (!rulesPlaying) {
+                        rulesAudio.play();
+                        rulesPlaying = true;
+                        rulesBtn.textContent = "⏹️ Arrêter les règles";
+                    } else {
+                        rulesAudio.pause();
+                        rulesAudio.currentTime = 0;
+                        rulesPlaying = false;
+                        rulesBtn.textContent = "🔊​ Règles du jeu";
+                    }
+                });
+
+                // Quand l'audio se termine
+                rulesAudio.addEventListener('ended', function() {
+                    rulesPlaying = false;
+                    rulesBtn.textContent = "🔊​ Règles du jeu";
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

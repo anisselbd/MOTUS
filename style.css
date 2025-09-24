@@ -1,0 +1,604 @@
+* {
+    /* réinitialisation des marges et paddings */
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    /* style du corps de la page */
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #333;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    /* conteneur principal */
+    max-width: 600px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+}
+
+header {
+    /* en-tête de la page */
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    color: #667eea;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Logo MOTUS  */
+.motus-logo {
+    max-width: 280px;
+    height: auto;
+    margin-bottom: 15px;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+    transition: transform 0.3s ease;
+}
+
+/* Logo spécial pour la page de jeu */
+.logo-container {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.motus-logo-game {
+    max-width: 150px;
+    height: auto;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+    transition: transform 0.3s ease;
+}
+
+.buttons-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 5px;
+}
+
+.motus-logo:hover,
+.motus-logo-game:hover {
+    transform: scale(1.02);
+}
+
+/* Titre du jeu en police Impact */
+.game-title {
+    font-family: Impact, "Arial Black", sans-serif;
+    font-size: 1.8rem;
+    color: #4559b3;
+    font-weight: bold; /* je le laisse en bold car bizarrement ça le recentre bien */
+    margin: 15px 0;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Bouton retour  */
+.back-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    background: #6c757d; /* Gris pour le bouton retour */
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    margin: 10px 0;
+    transition: background 0.3s;
+}
+
+.back-btn:hover {
+    background: #5a6268;
+}
+
+.game-info {
+    /* section des infos de jeu */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.attempts {
+    /* section des tentatives */
+    font-weight: bold;
+    color: #495057;
+}
+
+#attempts-count {
+    /* style du nombre de tentatives */
+    color: #dc3545;
+    font-size: 1.2rem;
+}
+
+.timer-section {
+    /* section du chrono */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.timer-label {
+    /* label du chrono */
+    font-size: 0.9rem;
+    color: #6c757d;
+    font-weight: bold;
+}
+
+.timer {
+    /* style du chrono */
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #28a745;
+    font-family: 'Courier New', monospace;
+    background: #ffffff;
+    padding: 8px 15px;
+    border-radius: 8px;
+    border: 2px solid #28a745;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    /* transition pour les changements de style */
+}
+
+.timer.warning {
+    /* style avertissement du chrono */
+    color: #ffc107;
+    border-color: #ffc107;
+    animation: pulse 1s ease-in-out infinite alternate;
+}
+
+.timer.critical {
+    /* style critique du chrono */
+    color: #dc3545;
+    border-color: #dc3545;
+    animation: flash 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes pulse {
+    /* keyframes = animation visu de pulsation sur le chrono */
+    from {transform: scale(1);}
+    to {transform: scale(1.05);} /* ou 1.1 on verra */
+}
+
+@keyframes flash {
+/* keyframes = animation de clignotement sur le chrono */
+    from {background-color: #ffffff;}
+    to {background-color: #ffebee;}
+}
+
+#new-game-btn {
+    /* bouton de nouvelle partie */
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s ease;
+}
+
+#new-game-btn:hover {
+    background: #218838;
+}
+
+.alert {
+    /* zone d'alerte pour les messages */
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: bold;
+    animation: slideIn 0.3s ease;
+}
+
+.alert.success {
+    /* style pour les messages de succès */
+    color: #155724;
+    border: 3px solid #c3e6cb;
+}
+
+.alert.error {
+    /* style pour les messages d'erreur */
+    color: #721c24;
+    border: 3px solid #f5c6cb;
+}
+
+.alert.hidden {
+    display: none;
+}
+
+@keyframes slideIn {
+/* keyframes = animation de glissement de haut en bas */
+    from {opacity: 0;transform: translateY(-10px);}
+    to {opacity: 1;transform: translateY(0);}
+}
+
+.game-board {
+    /* zone du jeu avec les lettres */
+    margin-bottom: 30px;
+}
+
+.word-row {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.letter-cell {
+    /* cellules des lettres */
+    width: 50px;
+    height: 50px;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    background: white;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.letter-cell.first-letter {
+    /* style spécifique pour la première lettre */
+    background: #667eea;
+    color: white;
+    border-color: #5a67d8;
+}
+
+.letter-cell.filled {
+    /* style pour les lettres remplies */
+    border-color: #adb5bd;
+    background: #f8f9fa;
+}
+
+.letter-cell.correct {
+    /* style pour les lettres correctes */
+    background: #dc3545;
+    color: white;
+    border-color: #c82333;
+}
+
+.letter-cell.present {
+    /* style pour les lettres présentes */
+    background: #ffc107;
+    color: white;
+    border-color: #e0a800;
+}
+
+.letter-cell.absent {
+    /* style pour les lettres absentes */
+    background: #6c757d;
+    color: white;
+    border-color: #5a6268;
+}
+
+.letter-cell.flip {
+    /* animation de retournement */
+    animation: flip 0.6s ease-in-out;
+}
+
+@keyframes flip {
+
+    /* keyframes = animation de retournement */
+    /* cette animation va faire tourner la lettre sur l'axe Y */
+    0% {
+        transform: rotateY(0);
+        /* état de base sans  rotation */
+    }
+    50% {
+        transform: rotateY(-90deg);
+        /* à mi-chemin de la rotation la lettre est à 90 degrés donc invisible */
+    }
+    100% {
+        transform: rotateY(0);
+        /* état final la lettre revient à sa position de base */
+    }
+}
+
+.input-section {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+    justify-content: center;
+}
+
+#guess-input {
+    flex: 1;
+    max-width: 200px;
+    padding: 12px;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    font-size: 1rem;
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+#guess-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+#submit-btn {
+    /* bouton de validation */
+    padding: 12px 24px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s ease;
+}
+
+#submit-btn:hover {
+    background: #5a67d8;
+}
+
+.keyboard {
+    /* clavier virtuel */
+    margin-bottom: 20px;
+}
+
+.keyboard-row {
+    /* lignes du clavier virtuel */
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.key {
+    /* touches du clavier virtuel */
+    min-width: 35px;
+    height: 45px;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    background: #f8f9fa;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.key:hover {
+    background: #e9ecef;
+    transform: translateY(-1px);
+}
+
+.key.backspace {
+    /* touche de suppression du clavier virtuel */
+    min-width: 60px;
+    background: #6c757d;
+    color: white;
+}
+
+.key.backspace:hover {
+    background: #5a6268;
+}
+
+.key.correct {
+    /* touche correcte */
+    background: #dc3545;
+    color: white;
+    border-color: #c82333;
+}
+
+.key.present {
+    /* touche présente */
+    background: #ffc107;
+    color: white;
+    border-color: #e0a800;
+}
+
+.key.absent {
+    /* touche absente */
+    background: #6c757d;
+    color: white;
+    border-color: #5a6268;
+}
+
+.game-status {
+    /* section d'information sur le mot */
+    text-align: center;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    color: #495057;
+}
+
+.game-status div {
+    margin-bottom: 5px;
+}
+
+.game-status span {
+    font-weight: bold;
+    color: #667eea;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .container {
+        margin: 10px;
+        padding: 20px;
+    }
+
+    header h1 {
+        font-size: 2rem;
+    }
+
+    .letter-cell {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+
+    .key {
+        min-width: 30px;
+        height: 40px;
+        font-size: 0.8rem;
+    }
+
+    .game-info {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .timer-section {
+        order: -1;
+    }
+
+    .timer {
+        font-size: 1.3rem;
+        padding: 6px 12px;
+    }
+}
+
+/* Styles spécifiques à la page d'accueil */
+.home-content {
+    text-align: center;
+}
+
+.game-description {
+    background: #f8f9fa;
+    padding: 30px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+}
+
+.game-description h2 {
+    color: #667eea;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+.game-description ul {
+    list-style: none;
+    text-align: left;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.game-description li {
+    padding: 10px 0;
+    font-size: 1.1rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.game-description li:last-child {
+    border-bottom: none;
+}
+
+.start-section {
+    /* Section pour démarrer une nouvelle partie */
+    margin-top: 30px;
+}
+
+.start-btn {
+    /* Bouton pour démarrer une nouvelle partie */
+    display: inline-block;
+    padding: 15px 30px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    text-decoration: none;
+    border-radius: 50px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.start-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+#musicBtn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    background: #4CAF50;
+    /* Vert pour indiquer à l'utilisateur qu'il peut activer la musique */
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    margin: 10px 0;
+    transition: background 0.3s;
+}
+
+#musicBtn.off {
+    background: #f44336;
+    /* Rouge pour indiquer que la musique est désactivée */
+}
+
+#rulesBtn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    background: #007BFF;
+    /* Bleu pour indiquer à l'utilisateur qu'il peut écouter les règles */
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    margin: 10px 0;
+    transition: background 0.3s;
+}
+
+/* syteme de pts*/
+.score-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0 10px 0;
+    padding: 15px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 10px;
+    border: 2px solid #dee2e6;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.current-score {
+    color: #007bff;
+    font-size: 1.1rem;
+}
+
+.best-score {
+    color: #28a745;
+    font-size: 1.1rem;
+}
+
+#score-display {
+    color: #0056b3;
+    font-size: 1.3rem;
+}
+
+#best-score-display {
+    color: #1e7e34;
+    font-size: 1.3rem;
+}
