@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function () {
             for (let col = 0; col < currentWord.length; col++) { // on crée une cellule pour chaque lettre du mot
                 const cell = document.createElement('div');
                 cell.className = 'letter-cell';
-                cell.id = 'cell-' + row + '-' + col; //cell- est l'id de la cellule, row est le numéro de la ligne et col est le numéro de la colonne
+                cell.id = 'cell-' + row + '-' + col; //cell- est l'id de la cellule, row est le numéro de la ligne et col est le numéro de la colonne en gros ca donne une "adresse postale" unique à chaque case du plateau genre cell-0-0 = ligne 0, colonne 0 (première case)
 
                 // Afficher la première lettre du mot dans la première colonne de chaque ligne
 
