@@ -692,6 +692,91 @@ function resetScore() {
  function updateStatsDisplay() {
 
  }
+
+ // Fonction pour initialiser le bonhomme interactif
+ function initCharacter() {
+    const container = document.getElementById("character-container");
+    const peek = document.getElementById("character-peek");
+    const out = document.getElementById("character-out");
+    const speechBubble = document.getElementById("character-speech-bubble");
+    const speechText = document.getElementById("speech-text");
+
+    if (!peek || !out || !container || !speechBubble) {
+        return;
+    }
+    
+    // Messages aléatoires pour la bulle
+    const messages = [
+        "Salut ! Besoins d'aide ?... ET BAH NON AHAHAHA 😜",
+        "Allez, tu peux le faire !... OU PAS 😈",
+        "Un petit indice : trouve le mot ! 😂",
+        "DEMERDE TOI ! 😤", 
+    ];
+
+    let speechTimeout;
+    
+    // S'assurer que peek est visible au début
+    peek.style.opacity = "1";
+    out.style.opacity = "0";
+
+    function showSpeechBubble() {
+        // Message aléatoire
+        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+        speechText.textContent = randomMessage;
+        
+        // Afficher la bulle
+        speechBubble.classList.add("show");
+        
+        // Cacher automatiquement après 3 secondes
+        clearTimeout(speechTimeout);
+        speechTimeout = setTimeout(() => {
+            speechBubble.classList.remove("show");
+        }, 3000);
+    }
+
+    // Variable pour suivre l'état du bonhomme
+    let isOut = false;
+
+    peek.addEventListener("click", (e) => {
+        e.stopPropagation();
+        
+        // Transition vers out (le bonhomme sort de sa cachette)
+        peek.style.opacity = "0";
+        peek.style.transform = "translateX(-150px)";
+        peek.style.zIndex = "1";
+        
+        out.style.opacity = "1";
+        out.style.transform = "translateX(0)";
+        out.style.zIndex = "2";
+        
+        isOut = true;
+    });
+
+    out.addEventListener("click", (e) => {
+        e.stopPropagation();
+        
+        // Si c'est le premier clic après être sorti, afficher la bulle
+        if (isOut) {
+            showSpeechBubble();
+            isOut = false; // Marquer qu'on a parlé
+        } else {
+            // Sinon, retourner vers peek (rentrer dans la cachette)
+            out.style.opacity = "0";
+            out.style.transform = "translateX(-150px)";
+            out.style.zIndex = "1";
+            
+            peek.style.opacity = "1";
+            peek.style.transform = "translateX(0)";
+            peek.style.zIndex = "2";
+        }
+    });
+
+    // Cacher la bulle si on clique ailleurs
+    document.addEventListener("click", () => {
+        speechBubble.classList.remove("show");
+    });
+ }
+
     // Démarrer une nouvelle partie au chargement de la page
     initGame();
     setupEventListeners();
@@ -699,5 +784,6 @@ function resetScore() {
     initRulesAudio();
     initScoreSystem(); // Initialiser les points
     initStatsSystem(); // Initialiser les statistiques
+    initCharacter(); // Initialiser le bonhomme
 
 }); // fin du domContentLoaded
