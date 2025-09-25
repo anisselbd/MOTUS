@@ -6,13 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <title>Motus - Le Jeu</title>
+    <link rel="icon" type="image/x-icon" href="iconemotus.ico">
+    
 </head>
 
 <body>
     <div class="container">
         <header>
             <div class="logo-container">
-                <img src="motus-logo.png" alt="MOTUS" class="motus-logo-game">
+                <img src="motus-logo.png" alt="MOTUS Logo" class="motus-logo-game">
             </div>
             <div class="buttons-container">
                 <button onclick="window.location.href='index.html'" class="back-btn">
@@ -20,6 +22,7 @@
                 </button>
                 <button id="musicBtn">🎵 Activer la musique</button>
                 <button id="rulesBtn">🔊​ Règles du jeu</button>
+                <button id="statsBtn">📊 Statistiques</button>
             </div>
         </header>
 
@@ -64,6 +67,26 @@
         <div class="game-status"> <!-- Informations sur le mot en bas de l'interface-->
             <div id="word-length">Mot de <span id="word-length-display">6</span> lettres</div>
             <div id="first-letter">Première lettre: <span id="first-letter-display">?</span></div>
+        </div>
+    </div>
+
+    <!-- Popup pour les stats -->
+    <div id="stats-popup" class="stats-popup-overlay hidden">
+        <div class="stats-popup-content">
+            <h3>📊 Statistiques</h3>
+            <div id="stats-content">
+                <p><strong>Parties jouées:</strong> <span id="total-games">0</span></p>
+                <p><strong>Parties gagnées:</strong> <span id="games-won">0</span></p>
+                <p><strong>Taux de réussite:</strong> <span id="win-rate">0</span>%</p>
+                <p><strong>Moyenne d'essais:</strong> <span id="avg-attempts">0</span></p>
+            </div>
+            
+            <h3>📚 Historique des dernières parties</h3>
+            <div id="game-history" class="stats-history-container">
+                <p id="no-games">Aucune partie jouée pour le moment.</p> <!-- si pas de partie saved -->
+            </div>
+            
+            <button id="close-stats-btn" class="stats-close-btn">Fermer</button>
         </div>
     </div>
 

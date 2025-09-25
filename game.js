@@ -38,6 +38,11 @@ document.addEventListener('DOMContentLoaded', function () {
     // Variables musique
     let playing = false;
 
+    // Variables sons du jeu
+    const winSound = new Audio('motusWin.mp3'); // son pour la win
+    const errorSound = new Audio('motusError.mp3'); // son pour l'erreur
+    const loseSound = new Audio('motusLose.mp3'); // son pour la défaite
+
     function initGame() { // Initialisation d'une nouvelle partie
         // Choisir un mot aléatoire dans le dictionnaire WORDS prealablement défini en haut du fichier
         currentWord = WORDS[Math.floor(Math.random() * WORDS.length)];
@@ -132,6 +137,15 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('submit-btn').addEventListener('click', submitGuess); // écouteur d'événement pour le bouton de soumission
         document.getElementById('new-game-btn').addEventListener('click', initGame); // écouteur d'événement pour le bouton de nouvelle partie
 
+        // Événements pour la popup des statistiques
+        document.getElementById('statsBtn').addEventListener('click', showStats);
+        document.getElementById('close-stats-btn').addEventListener('click', hideStats);
+        document.getElementById('stats-popup').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideStats();
+            }
+        });
+
         // Empêcher la saisie normale dans le champ input
         const input = document.getElementById('guess-input');
         input.addEventListener('keydown', function (e) {
@@ -203,11 +217,15 @@ document.addEventListener('DOMContentLoaded', function () {
         const guess = getCurrentWord();
 
         if (guess.length !== currentWord.length) { // Vérification de la longueur du mot proposé
+            // joue le son d'erreur
+            errorSound.play();
             showAlert('Le mot doit faire ' + currentWord.length + ' lettres !', 'error');
             return;
         }
 
         if (!isValidWord(guess)) { // Vérification si le mot proposé est dans le dictionnaire
+            // Joue le son d'erreur
+            errorSound.play();
             showAlert('Ce mot n\'existe pas dans notre dictionnaire !', 'error');
             return;
         }
@@ -224,6 +242,9 @@ document.addEventListener('DOMContentLoaded', function () {
             return; // on arrête la fonction ici
         }
 
+        // joue le son d'erreur si le mot n'est pas correct
+        errorSound.play();
+
         currentRow++; // on passe à la ligne suivante
         currentCol = 0; // on remet la colonne à 0 pour la nouvelle ligne
         attemptsLeft--; // on décrémente le nombre de tentatives restantes donc -1 au compteur des attempts
@@ -232,6 +253,15 @@ document.addEventListener('DOMContentLoaded', function () {
         if (currentRow >= maxAttempts) { // si on a utilisé toutes les tentatives
             gameLost = true; // on a perdu
             stopTimer();
+            
+            // joue le son de défaite
+            loseSound.play();
+            
+            // Enregistrer les statistiques de la partie perdue
+            const attemptsUsed = maxAttempts;
+            saveGameToHistory(false, attemptsUsed, currentWord, 0, timeLeft);
+            updateGlobalStats(false, attemptsUsed);
+            
             showAlert('😞 Dommage ! Le mot était : ' + currentWord, 'error');
             return;
         }
@@ -248,12 +278,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Animation de retournement des cellules
         for (let i = 0; i < guess.length; i++) { // on parcourt chaque lettre du mot proposé
-            const cell = document.getElementById('cell-' + currentRow + '-' + i);
-            cell.classList.add(states[i]);
+            const cell = document.getElementById('cell-' + currentRow + '-' + i); // on récupère la cellule correspondante
+            cell.classList.add(states[i]); // on ajoute la classe correspondant à l'état de la lettre (correct, present, absent)
 
-            setTimeout(function () {
+            setTimeout(function () { // setTimeout créé un délai entre chaque lettre avant d'exécuter la fonction
                 cell.classList.add('flip');
-            }, i * 100);
+            }, i * 100); //délai de 100ms entre chaque lettre pour l'effet de flip
         }
 
         updateKeyboardFromGuess(guess, states); // mise à jour du clavier virtuel
@@ -374,6 +404,15 @@ document.addEventListener('DOMContentLoaded', function () {
         gameActive = false;
         gameLost = true;
         clearInterval(timerInterval);
+        
+        // Jouer le son de défaite
+        loseSound.play();
+        
+        // Enregistrer les statistiques de la partie perdue par temps
+        const attemptsUsed = currentRow;
+        saveGameToHistory(false, attemptsUsed, currentWord, 0, 0);
+        updateGlobalStats(false, attemptsUsed);
+        
         showAlert('⏰ Temps écoulé ! Le mot était : ' + currentWord, 'error');
     }
 
@@ -385,20 +424,20 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Gestion de la musique
-    function initMusic() {
-        const music = document.getElementById("motusMusic");
-        const musicBtn = document.getElementById("musicBtn");
+    function initMusic() { // Initialisation de la musique
+        const music = document.getElementById("motusMusic"); // on récupère l'élément audio
+        const musicBtn = document.getElementById("musicBtn"); // on récupère le bouton de musique
 
-        if (musicBtn && music) {
-            musicBtn.addEventListener("click", function () {
-                if (!playing) {
-                    music.play();
-                    playing = true;
+        if (musicBtn && music) { // Si les éléments existent
+            musicBtn.addEventListener("click", function () { // écouteur d'événement pour le bouton de musique
+                if (!playing) { // si la musique n'est pas en train de jouer
+                    music.play(); // on lance la musique
+                    playing = true; // on met à jour l'état
                     musicBtn.textContent = "🔇 Désactiver la musique";
                     musicBtn.classList.add("off");
-                } else {
-                    music.pause();
-                    playing = false;
+                } else { // si la musique est en train de jouer
+                    music.pause(); // on met en pause la musique
+                    playing = false; // on met à jour l'état
                     musicBtn.textContent = "🎵 Activer la musique";
                     musicBtn.classList.remove("off");
                 }
@@ -412,17 +451,17 @@ document.addEventListener('DOMContentLoaded', function () {
         const rulesBtn = document.getElementById("rulesBtn");
         let rulesPlaying = false;
 
-        if (rulesBtn && rulesAudio) {
-            rulesBtn.addEventListener("click", function () {
-                if (!rulesPlaying) {
-                    rulesAudio.play();
-                    rulesPlaying = true;
-                    rulesBtn.textContent = "⏹️ Arrêter les règles";
-                } else {
-                    rulesAudio.pause();
-                    rulesAudio.currentTime = 0;
-                    rulesPlaying = false;
-                    rulesBtn.textContent = "🔊​ Règles du jeu";
+        if (rulesBtn && rulesAudio) { // Si les éléments existent
+            rulesBtn.addEventListener("click", function () { 
+                if (!rulesPlaying) { // si l'audio n'est pas en train de jouer
+                    rulesAudio.play(); // on lance l'audio
+                    rulesPlaying = true; // on met à jour l'état
+                    rulesBtn.textContent = "⏹️ Arrêter les règles"; // on change le texte du bouton
+                } else { // si l'audio est en train de jouer
+                    rulesAudio.pause(); // on met en pause l'audio
+                    rulesAudio.currentTime = 0; // on remet l'audio au début
+                    rulesPlaying = false; // on met à jour l'état
+                    rulesBtn.textContent = "🔊​ Règles du jeu"; 
                 }
             });
 
@@ -436,8 +475,14 @@ document.addEventListener('DOMContentLoaded', function () {
     // Système de points
 
 // Variables de score (à ajouter aux autres variables du jeu)
-let playerScore = 0;
-let bestScore = parseInt(localStorage.getItem('motus-best-score') || '0');
+let playerScore = 0; // score actuel du joueur
+let bestScore = parseInt(localStorage.getItem('motus-best-score') || '0'); // meilleur score stocké dans le localStorage
+
+// Variables pour les statistiques et l'historique
+let gameHistory = JSON.parse(localStorage.getItem('motus-game-history') || '[]'); // tableau pour l'historique des parties en json pour le localStorage
+let totalGames = parseInt(localStorage.getItem('motus-total-games') || '0'); // nombre total de parties jouées
+let gamesWon = parseInt(localStorage.getItem('motus-games-won') || '0'); // nombre de parties gagnées
+let totalAttempts = parseInt(localStorage.getItem('motus-total-attempts') || '0'); // nombre total de tentatives utilisées
 
 // initialisation du système de points
 function initScoreSystem() {
@@ -507,10 +552,19 @@ function loadBestScore() { // Charger le meilleur score depuis le localStorage c
 // quand le joueur gagne (à mettre dans submitGuess)
 function handleVictory() {
     console.log("Victoire détectée !"); // debug
+    
+    // Jouer le son de victoire
+    winSound.play();
+    
     playerScore = calculateScore();
     updateScoreDisplay();
     
     const isNewRecord = saveBestScore();
+    
+    // enregistre les stats de la partie gagnée
+    const attemptsUsed = maxAttempts - attemptsLeft + 1;
+    saveGameToHistory(true, attemptsUsed, currentWord, playerScore, timeLeft);
+    updateGlobalStats(true, attemptsUsed);
     
     let message = '🎉 Félicitations ! Score: ' + playerScore + ' points !';
     if (isNewRecord) {
@@ -527,11 +581,123 @@ function resetScore() {
     console.log("Score remis à zéro"); // debug
 }
 
+ //  SYSTÈME DE STATISTIQUES 
+
+ // Initialisation du système de statistiques
+ function initStatsSystem() {
+    loadStats();
+    updateStatsDisplay();
+ }
+
+ // Enregistrer une partie dans l'historique
+ function saveGameToHistory(won, attempts, word, score, timeUsed) {
+    const gameData = {
+        date: new Date().toLocaleString('fr-FR'), // date et heure en france de la partie
+        won: won, // si la partie a été gagnée
+        attempts: attempts, // nombre de tentatives utilisées
+        word: word, // mot à deviner
+        score: score, // score obtenu
+        timeUsed: 120 - timeUsed, // temps utilisé en secondes
+        timestamp: Date.now() // permet de classer les parties par ordre chronologique dans le temps
+    }; 
+    
+    gameHistory.unshift(gameData); // Ajouter au début du tableau contrairement` à push qui ajoute à la fin
+    
+    // Garder seulement les 50 dernières parties dans le localStorage
+    if (gameHistory.length > 50) {
+        gameHistory = gameHistory.slice(0, 50);
+    }
+    
+    localStorage.setItem('motus-game-history', JSON.stringify(gameHistory));
+ }
+
+ // Mettre à jour les statistiques globales
+ function updateGlobalStats(won, attempts) {
+    totalGames++;
+    if (won) {
+        gamesWon++;
+    }
+    totalAttempts += attempts;
+    
+    localStorage.setItem('motus-total-games', totalGames.toString());
+    localStorage.setItem('motus-games-won', gamesWon.toString());
+    localStorage.setItem('motus-total-attempts', totalAttempts.toString());
+ }
+
+ // Charger les statistiques depuis localStorage
+ function loadStats() {
+    gameHistory = JSON.parse(localStorage.getItem('motus-game-history') || '[]');
+    totalGames = parseInt(localStorage.getItem('motus-total-games') || '0');
+    gamesWon = parseInt(localStorage.getItem('motus-games-won') || '0');
+    totalAttempts = parseInt(localStorage.getItem('motus-total-attempts') || '0');
+ }
+
+ // Calculer les statistiques
+ function calculateStats() {
+    const winRate = totalGames > 0 ? ((gamesWon / totalGames) * 100) : 0; // pourcentage de victoires
+    const avgAttempts = totalGames > 0 ? (totalAttempts / totalGames) : 0; // moyenne de tentatives par partie
+    
+    return {
+        totalGames: totalGames, // nombre total de parties jouées
+        gamesWon: gamesWon, // nombre de parties gagnées
+        winRate: winRate.toFixed(1), // taux de victoire en pourcentage avec une seule décimale pour plus de lisibilité (xp useeeeeer)
+        avgAttempts: avgAttempts.toFixed(1) // moyenne de tentatives avec une seule décimale pour plus de lisibilité (xp useeeeeer)
+    };
+ }
+
+ // Afficher les statistiques
+ function showStats() {
+    const stats = calculateStats();
+    
+    // Mettre à jour les statistiques dans le DOM
+    document.getElementById('total-games').textContent = stats.totalGames;
+    document.getElementById('games-won').textContent = stats.gamesWon;
+    document.getElementById('win-rate').textContent = stats.winRate;
+    document.getElementById('avg-attempts').textContent = stats.avgAttempts;
+    
+    // Mettre à jour l'historique
+    const historyContainer = document.getElementById('game-history');
+    
+    if (gameHistory.length === 0) {
+        historyContainer.innerHTML = '<p id="no-games">Aucune partie jouée pour le moment.</p>';
+    } else {
+        let historyHtml = '';
+        
+        gameHistory.slice(0, 10).forEach((game, index) => {  // Afficher seulement les 10 dernières parties dans l'historique visible
+            const result = game.won ? '🏆 Gagné' : '❌ Perdu';
+            const timeFormatted = Math.floor(game.timeUsed / 60) + ':' + (game.timeUsed % 60).toString().padStart(2, '0'); 
+            
+            historyHtml += `
+                <div class="stats-game-item">
+                    <strong>${result}</strong> - ${game.word}<br> 
+                    📅 ${game.date}<br>
+                    🎯 ${game.attempts} essais - 🏆 ${game.score} points - ⏱️ ${timeFormatted}
+                </div>
+            `;
+        });
+        
+        historyContainer.innerHTML = historyHtml;
+    }
+    
+    // Afficher la popup
+    document.getElementById('stats-popup').classList.remove('hidden');
+ }
+
+ // Masquer les statistiques
+ function hideStats() {
+    document.getElementById('stats-popup').classList.add('hidden');
+ }
+
+ 
+ function updateStatsDisplay() {
+
+ }
     // Démarrer une nouvelle partie au chargement de la page
     initGame();
     setupEventListeners();
     initMusic();
     initRulesAudio();
     initScoreSystem(); // Initialiser les points
-}); // fin du domContentLoaded
+    initStatsSystem(); // Initialiser les statistiques
 
+}); // fin du domContentLoaded

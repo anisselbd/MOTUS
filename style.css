@@ -569,6 +569,92 @@ header h1 {
     transition: background 0.3s;
 }
 
+#statsBtn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    background: #667eea;
+    /* Violet pour le bouton statistiques */
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    margin: 10px 0;
+    transition: background 0.3s;
+}
+
+#statsBtn:hover {
+    background: #5a67d8;
+}
+
+/* popup de statistiques */
+.stats-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.stats-popup-content {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.stats-popup-content h3 {
+    color: #667eea;
+    margin-bottom: 15px;
+    font-size: 1.3rem;
+}
+
+.stats-popup-content p {
+    margin: 8px 0;
+    font-size: 1rem;
+}
+
+.stats-popup-content strong {
+    color: #333;
+}
+
+.stats-history-container {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.stats-game-item {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+    background: #f8f9fa;
+}
+
+.stats-close-btn {
+    margin-top: 15px;
+    padding: 10px 20px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.3s ease;
+}
+
+.stats-close-btn:hover {
+    background: #5a67d8;
+}
+
 /* syteme de pts*/
 .score-section {
     display: flex;
@@ -601,4 +687,77 @@ header h1 {
 #best-score-display {
     color: #1e7e34;
     font-size: 1.3rem;
+}
+
+/* Popup de statistiques */
+.stats-popup-overlay { /* Fond plus sombre couvrant toute la page pour focus l'utilisateur sur la popup */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.stats-popup-overlay.hidden {
+    display: none;
+}
+
+.stats-popup-content {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.stats-popup-content h3 {
+    color: #667eea;
+    margin-bottom: 15px;
+    font-size: 1.3rem;
+}
+
+.stats-popup-content p {
+    margin: 8px 0;
+    font-size: 1rem;
+}
+
+.stats-popup-content strong {
+    color: #333;
+}
+
+.stats-history-container {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.stats-game-item {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+    background: #f8f9fa;
+}
+
+.stats-close-btn {
+    margin-top: 15px;
+    padding: 10px 20px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.3s ease;
+}
+
+.stats-close-btn:hover {
+    background: #5a67d8;
 }
