@@ -614,7 +614,7 @@ header h1 {
 .stats-popup-content h3 {
     color: #667eea;
     margin-bottom: 15px;
-    font-size: 1.3rem;
+    font-size: 1.3rem; 
 }
 
 .stats-popup-content p {

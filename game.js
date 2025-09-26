@@ -650,18 +650,18 @@ function resetScore() {
     const stats = calculateStats();
     
     // Mettre à jour les statistiques dans le DOM
-    document.getElementById('total-games').textContent = stats.totalGames;
-    document.getElementById('games-won').textContent = stats.gamesWon;
-    document.getElementById('win-rate').textContent = stats.winRate;
-    document.getElementById('avg-attempts').textContent = stats.avgAttempts;
+    document.getElementById('total-games').textContent = stats.totalGames; // nombre total de parties jouées
+    document.getElementById('games-won').textContent = stats.gamesWon; // nombre de parties gagnées
+    document.getElementById('win-rate').textContent = stats.winRate; // taux de victoire en pourcentage
+    document.getElementById('avg-attempts').textContent = stats.avgAttempts; // moyenne de tentatives par partie
     
     // Mettre à jour l'historique
-    const historyContainer = document.getElementById('game-history');
+    const historyContainer = document.getElementById('game-history'); // conteneur de l'historique des parties
     
-    if (gameHistory.length === 0) {
-        historyContainer.innerHTML = '<p id="no-games">Aucune partie jouée pour le moment.</p>';
+    if (gameHistory.length === 0) { // si aucune partie n'a été jouée
+        historyContainer.innerHTML = '<p id="no-games">Aucune partie jouée pour le moment.</p>'; // message indiquant qu'aucune partie n'a été jouée
     } else {
-        let historyHtml = '';
+        let historyHtml = ''; // variable pour stocker le HTML de l'historique
         
         gameHistory.slice(0, 10).forEach((game, index) => {  // Afficher seulement les 10 dernières parties dans l'historique visible
             const result = game.won ? '🏆 Gagné' : '❌ Perdu';
@@ -669,14 +669,14 @@ function resetScore() {
             
             historyHtml += `
                 <div class="stats-game-item">
-                    <strong>${result}</strong> - ${game.word}<br> 
-                    📅 ${game.date}<br>
+                    <strong>${result}</strong> - ${game.word}<br>  
+                    📅 ${game.date}<br> 
                     🎯 ${game.attempts} essais - 🏆 ${game.score} points - ⏱️ ${timeFormatted}
                 </div>
             `;
-        });
+        }); // le $ est utilisé pour insérer des variables dans une chaîne de caractères (ici pour insérer les variables dans le HTML)
         
-        historyContainer.innerHTML = historyHtml;
+        historyContainer.innerHTML = historyHtml; // on met à jour le contenu HTML du conteneur de l'historique avec le HTML généré
     }
     
     // Afficher la popup
@@ -689,19 +689,19 @@ function resetScore() {
  }
 
  
- function updateStatsDisplay() {
+ function updateStatsDisplay() { // Met à jour l'affichage des statistiques dans le DOM (evite le bug de l'affichage vide au premier clic de la popup)
 
  }
 
  // Fonction pour initialiser le bonhomme interactif
- function initCharacter() {
-    const container = document.getElementById("character-container");
-    const peek = document.getElementById("character-peek");
-    const out = document.getElementById("character-out");
-    const speechBubble = document.getElementById("character-speech-bubble");
-    const speechText = document.getElementById("speech-text");
+ function initCharacter() { // Initialisation du bonhomme interactif
+    const container = document.getElementById("character-container"); // conteneur du bonhomme
+    const peek = document.getElementById("character-peek"); // bonhomme qui regarde
+    const out = document.getElementById("character-out"); // bonhomme qui sort de sa cachette
+    const speechBubble = document.getElementById("character-speech-bubble"); // bulle de dialogue
+    const speechText = document.getElementById("speech-text"); // texte dans la bulle de dialogue
 
-    if (!peek || !out || !container || !speechBubble) {
+    if (!peek || !out || !container || !speechBubble) { // Si les éléments n'existent pas, on quitte la fonction
         return;
     }
     
@@ -713,13 +713,13 @@ function resetScore() {
         "DEMERDE TOI ! 😤", 
     ];
 
-    let speechTimeout;
+    let speechTimeout; // Variable pour le timeout de la bulle
     
     // S'assurer que peek est visible au début
-    peek.style.opacity = "1";
+    peek.style.opacity = "1"; 
     out.style.opacity = "0";
 
-    function showSpeechBubble() {
+    function showSpeechBubble() { // Afficher la bulle de dialogue avec un message aléatoire
         // Message aléatoire
         const randomMessage = messages[Math.floor(Math.random() * messages.length)];
         speechText.textContent = randomMessage;
@@ -735,13 +735,13 @@ function resetScore() {
     }
 
     // Variable pour suivre l'état du bonhomme
-    let isOut = false;
+    let isOut = false; // false = dans la cachette, true = dehors
 
-    peek.addEventListener("click", (e) => {
-        e.stopPropagation();
+    peek.addEventListener("click", (e) => { // Quand on clique sur le bonhomme qui regarde
+        e.stopPropagation(); // Empêche la propagation de l'événement pour éviter de fermer la bulle immédiatement
         
         // Transition vers out (le bonhomme sort de sa cachette)
-        peek.style.opacity = "0";
+        peek.style.opacity = "0"; 
         peek.style.transform = "translateX(-150px)";
         peek.style.zIndex = "1";
         
@@ -752,8 +752,8 @@ function resetScore() {
         isOut = true;
     });
 
-    out.addEventListener("click", (e) => {
-        e.stopPropagation();
+    out.addEventListener("click", (e) => { // Quand on clique sur le bonhomme qui est dehors
+        e.stopPropagation(); // Empêche la propagation de l'événement pour éviter de fermer la bulle immédiatement
         
         // Si c'est le premier clic après être sorti, afficher la bulle
         if (isOut) {
