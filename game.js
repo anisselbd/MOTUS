@@ -110,11 +110,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // ici on va utiliser forEach pour eviter de creer le clavier en dur dans le html
 
-        rows.forEach(row => { // cette fonction sert à créer les touches du clavier en créant une div pour chaque ligne
+        rows.forEach(row => { // cette fonction va créer les touches du clavier en créant une div pour chaque ligne
             const rowElement = document.createElement('div');
             rowElement.className = 'keyboard-row';
 
-            row.forEach(key => { // cette fonction sert à créer chaque touche du clavier en créant un bouton pour chaque touche
+            row.forEach(key => { // cette fonction va créer chaque touche du clavier en créant un bouton pour chaque touche
                 const keyElement = document.createElement('button');
                 keyElement.className = 'key';
                 keyElement.textContent = key;
@@ -257,12 +257,21 @@ document.addEventListener('DOMContentLoaded', function () {
             // joue le son de défaite
             loseSound.play();
             
+            // Réinitialiser le streak car le joueur a perdu
+            const lostStreak = currentStreak; // Sauvegarder le streak perdu pour l'afficher
+            resetStreak();
+            
             // Enregistrer les statistiques de la partie perdue
             const attemptsUsed = maxAttempts;
             saveGameToHistory(false, attemptsUsed, currentWord, 0, timeLeft);
             updateGlobalStats(false, attemptsUsed);
             
-            showAlert('😞 Dommage ! Le mot était : ' + currentWord, 'error');
+            let loseMessage = '😞 Dommage ! Le mot était : ' + currentWord;
+            if (lostStreak > 0) {
+                loseMessage += '\n💔 Série de ' + lostStreak + ' victoires perdue...';
+            }
+            
+            showAlert(loseMessage, 'error');
             return;
         }
 
@@ -408,12 +417,21 @@ document.addEventListener('DOMContentLoaded', function () {
         // Jouer le son de défaite
         loseSound.play();
         
+        // Réinitialiser le streak car le joueur a perdu
+        const lostStreak = currentStreak; // Sauvegarder le streak perdu pour l'afficher
+        resetStreak();
+        
         // Enregistrer les statistiques de la partie perdue par temps
         const attemptsUsed = currentRow;
         saveGameToHistory(false, attemptsUsed, currentWord, 0, 0);
         updateGlobalStats(false, attemptsUsed);
         
-        showAlert('⏰ Temps écoulé ! Le mot était : ' + currentWord, 'error');
+        let timeUpMessage = '⏰ Temps écoulé ! Le mot était : ' + currentWord;
+        if (lostStreak > 0) {
+            timeUpMessage += '\n💔 Série de ' + lostStreak + ' victoires perdue...';
+        }
+        
+        showAlert(timeUpMessage, 'error');
     }
 
     function stopTimer() { // Arrêt du chronomètre
@@ -484,16 +502,19 @@ let totalGames = parseInt(localStorage.getItem('motus-total-games') || '0'); // 
 let gamesWon = parseInt(localStorage.getItem('motus-games-won') || '0'); // nombre de parties gagnées
 let totalAttempts = parseInt(localStorage.getItem('motus-total-attempts') || '0'); // nombre total de tentatives utilisées
 
+// Variables pour le système de streak
+let currentStreak = parseInt(localStorage.getItem('motus-current-streak') || '0'); // série de victoires actuelle
+let bestStreak = parseInt(localStorage.getItem('motus-best-streak') || '0'); // meilleure série de victoires
+
 // initialisation du système de points
 function initScoreSystem() {
-    console.log("Système de points initialisé"); // debug
     updateScoreDisplay();
     loadBestScore();
+    loadStreak(); // Charger le streak au démarrage
 }
 
 // calcul des points
 function calculateScore() {
-    console.log("calcul du score"); // debug
     let points = 0;
     
     // Points de base pour la victoire
@@ -511,16 +532,16 @@ function calculateScore() {
     // Bonus spécial si trouvé du premier coup
     if (currentRow === 0) {
         points += 500; // Bonus "fatalityyyyy"
-        console.log("Bonus fatalityyyyy"); // debug
     }
     
-    console.log(points); // debug
+    // Bonus de streak
+    points += getStreakBonus();
+    
     return Math.max(points, 0); // retirer les scores négatifs (bugs parfois)
 }
 
 // mise à jour de l'affichage des scores
 function updateScoreDisplay() { // Met à jour l'affichage du score et du meilleur score
-    console.log(updateScoreDisplay) // à enlever plus tard
     const scoreElement = document.getElementById('score-display');
     const bestScoreElement = document.getElementById('best-score-display');
     
@@ -537,7 +558,6 @@ function saveBestScore() { // sauvegarde le meilleur score dans le localStorage
     if (playerScore > bestScore) {
         bestScore = playerScore;
         localStorage.setItem('motus-best-score', bestScore.toString());
-        console.log("Nouveau record sauvegardé:", bestScore); // debug
         return true; // Nouveau record
     }
     return false; // Pas de nouveau record
@@ -551,13 +571,17 @@ function loadBestScore() { // Charger le meilleur score depuis le localStorage c
 
 // quand le joueur gagne (à mettre dans submitGuess)
 function handleVictory() {
-    console.log("Victoire détectée !"); // debug
+   
     
     // Jouer le son de victoire
     winSound.play();
     
+    // Incrémenter le streak AVANT de calculer le score (pour que le bonus soit appliqué)
+    const isNewStreakRecord = incrementStreak();
+    
     playerScore = calculateScore();
     updateScoreDisplay();
+    updateStreakDisplay(); // Mise à jour de l'affichage du streak
     
     const isNewRecord = saveBestScore();
     
@@ -567,8 +591,22 @@ function handleVictory() {
     updateGlobalStats(true, attemptsUsed);
     
     let message = '🎉 Félicitations ! Score: ' + playerScore + ' points !';
+    
+    // Afficher le streak actuel
+    if (currentStreak > 1) {
+        message += '\n🔥 Série de ' + currentStreak + ' victoires !';
+        const streakBonus = getStreakBonus();
+        if (streakBonus > 0) {
+            message += ' (+' + streakBonus + ' points bonus)';
+        }
+    }
+    
+    if (isNewStreakRecord) {
+        message += '\n� NOUVEAU RECORD DE SÉRIE !';
+    }
+    
     if (isNewRecord) {
-        message += '\n🏆 NOUVEAU RECORD !'; // /n veut dire "nouvelle ligne"
+        message += '\n🏆 NOUVEAU RECORD DE SCORE !';
     }
     
     showAlert(message, 'success');
@@ -578,8 +616,58 @@ function handleVictory() {
 function resetScore() {
     playerScore = 0;
     updateScoreDisplay();
-    console.log("Score remis à zéro"); // debug
 }
+
+ //  SYSTÈME DE STREAK 
+
+ // Charger le streak depuis localStorage
+ function loadStreak() {
+    currentStreak = parseInt(localStorage.getItem('motus-current-streak') || '0');
+    bestStreak = parseInt(localStorage.getItem('motus-best-streak') || '0');
+    updateStreakDisplay();
+ }
+
+ // Incrémenter le streak (appelé quand le joueur gagne)
+ function incrementStreak() {
+    currentStreak++;
+    localStorage.setItem('motus-current-streak', currentStreak.toString());
+    
+    // Vérifier si c'est un nouveau record de streak
+    if (currentStreak > bestStreak) {
+        bestStreak = currentStreak;
+        localStorage.setItem('motus-best-streak', bestStreak.toString());
+        return true; // Nouveau record de streak
+    }
+    return false; // Pas de nouveau record
+ }
+
+ // Réinitialiser le streak (appelé quand le joueur perd)
+ function resetStreak() {
+    currentStreak = 0;
+    localStorage.setItem('motus-current-streak', '0');
+    updateStreakDisplay();
+ }
+
+ // Calculer le bonus de points selon le streak
+ function getStreakBonus() {
+    if (currentStreak === 0) return 0; // Pas de bonus pour la première victoire
+    
+    // Bonus progressif : 100 points de base + 50 points par victoire dans le streak
+    return 100 + (currentStreak * 50);
+ }
+
+ // Mettre à jour l'affichage du streak
+ function updateStreakDisplay() {
+    const currentStreakElement = document.getElementById('current-streak-display');
+    const bestStreakElement = document.getElementById('best-streak-display');
+    
+    if (currentStreakElement) {
+        currentStreakElement.textContent = currentStreak;
+    }
+    if (bestStreakElement) {
+        bestStreakElement.textContent = bestStreak;
+    }
+ }
 
  //  SYSTÈME DE STATISTIQUES 
 
@@ -707,11 +795,11 @@ function resetScore() {
     
     // Messages aléatoires pour la bulle
     const messages = [
-        "Salut ! Besoins d'aide ?... ET BAH NON AHAHAHA 😜",
-        "Allez, tu peux le faire !... OU PAS 😈",
+        "Enchaine les flammes pour un max de points ! 💪",
+        "Ne perds pas ton streak ! 🔥",
         "Un petit indice : trouve le mot ! 😂",
-        "DEMERDE TOI ! 😤", 
-    ];
+        "Tu peux battre ton record ! 🏆", 
+    ]; 
 
     let speechTimeout; // Variable pour le timeout de la bulle
     
@@ -731,7 +819,7 @@ function resetScore() {
         clearTimeout(speechTimeout);
         speechTimeout = setTimeout(() => {
             speechBubble.classList.remove("show");
-        }, 3000);
+        }, 3000); 
     }
 
     // Variable pour suivre l'état du bonhomme
@@ -781,7 +869,7 @@ function resetScore() {
     initGame();
     setupEventListeners();
     initMusic();
-    initRulesAudio();
+    initRulesAudio(); 
     initScoreSystem(); // Initialiser les points
     initStatsSystem(); // Initialiser les statistiques
     initCharacter(); // Initialiser le bonhomme

@@ -689,6 +689,52 @@ header h1 {
     font-size: 1.3rem;
 }
 
+/* Section streak (série de victoires) */
+.streak-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 0 20px 0;
+    padding: 15px;
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    border-radius: 10px;
+    border: 2px solid #ffc107;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.current-streak {
+    color: #ff6b35;
+    font-size: 1.1rem;
+}
+
+.best-streak {
+    color: #d4af37;
+    font-size: 1.1rem;
+}
+
+#current-streak-display {
+    color: #e74c3c;
+    font-size: 1.3rem;
+    font-weight: bold;
+}
+
+#best-streak-display {
+    color: #f39c12;
+    font-size: 1.3rem;
+    font-weight: bold;
+}
+
+/* Animation pour le streak quand il augmente */
+@keyframes streakPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.current-streak.pulse {
+    animation: streakPulse 0.5s ease;
+}
+
 /* Popup de statistiques */
 .stats-popup-overlay { /* Fond plus sombre couvrant toute la page pour focus l'utilisateur sur la popup */
     position: fixed;

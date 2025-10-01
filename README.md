@@ -1,4 +1,4 @@
-# 🎮 MOTUS - Jeu de Mots Interactif
+#  MOTUS - Jeu de Mots Interactif
 
 Un jeu de mots inspiré du célèbre jeu télévisé français MOTUS, développé en HTML, CSS et JavaScript.
 
@@ -10,7 +10,7 @@ MOTUS est un jeu de réflexion où le joueur doit deviner un mot de 5 lettres en
 
 ##  Fonctionnalités
 
-### 🎯 Gameplay Principal
+### Gameplay Principal
 - **Mécanisme de jeu authentique** : Reproduit fidèlement les règles du MOTUS télévisé
 - **Validation en temps réel** : Vérification instantanée des mots saisis
 - **Système d'indices visuels** :
@@ -109,7 +109,7 @@ PROJET MOTUS/
 1. Clonez ou téléchargez le repository
 2. Ouvrez `index.html` dans votre navigateur
 3. Cliquez sur "Commencer une partie"
-4. Amusez-vous ! 🎉
+4. Amusez-vous ! 
 
 
 ##  Fonctionnalités Avancées
@@ -145,6 +145,6 @@ Les contributions sont les bienvenues ! N'hésitez pas à :
 
 ---
 
-**Développé avec ❤️ par Jeremy, Balou, Cedric et Anisse !
+**Développé par Jeremy, Balou, Cedric et Anisse !
 
 *Amusez-vous bien et que les mots soient avec vous ! 
